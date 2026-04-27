@@ -63,20 +63,32 @@ var mongoURL = process.env.MONGO_URL || process.argv[2];
 var mongoose = require('mongoose');
 
 // Faz a conexão com o MongoDB usando a URL recebida por argumento
-mongoose.connect(mongoURL);
+if (!mongoURL) {
+    console.log("ERRO: MONGO_URL não foi definida");
+    process.exit(1);
+}
+
+mongoose.connect(mongoURL)
+    .then(() => {
+        console.log('Database Connected');
+    })
+    .catch((error) => {
+        console.log("Erro ao conectar no MongoDB:", error.message);
+        process.exit(1);
+    });
 
 // Define que o Mongoose vai usar as Promises nativas do JavaScript
 mongoose.Promise = global.Promise;
 
 // Obtém o objeto de conexão do Mongoose
-const db = mongoose.connection;
+//const db = mongoose.connection;
 
 // Evento disparado se ocorrer erro na conexão com o banco
-db.on('error', (error) => {
-    console.log(error);
-});
+//db.on('error', (error) => {
+    //console.log(error);
+//});
 
 // Evento disparado uma única vez quando a conexão for estabelecida com sucesso
-db.once('connected', () => {
-    console.log('Database Connected');
-});
+//db.once('connected', () => {
+    //console.log('Database Connected');
+//});
